@@ -116,6 +116,7 @@ class RoundcubeLogin
   * @var string
   */
   public $rcPath;
+  public $rcPath1;
 
   /**
   * Идентификатор сеанса Roundcube.
@@ -157,7 +158,9 @@ class RoundcubeLogin
   *
   * @var string
   */
-  private $hostname;
+  //private $hostname;
+  
+  //private $scheme;
 
   /**
   * Порт для подключения к серверу где распологается Roundcube.
@@ -214,34 +217,46 @@ class RoundcubeLogin
   * @param bool Включает отладку и показывает полный POST и ответ.
   */
   public function __construct(
-    $webmailPath,
+    //$webmailPath,
     $enableDebug = FALSE,
     $writeLogEnabled = FALSE,
     $sentRedirectEnabled = FALSE)
   {
+    // Получаем глобальные переменные.
     // Инициализируем переменные класса:
-    //   создаём массив для записи отладочных сообщений в стёк.
+    //   создаём массив для записи отладочных сообщений в стёк;
     $this->debugStack = array();
-    // Вывод отладочной информации в браузер.
+    //   вывод отладочной информации в браузер;
     $this->debugEnabled = $enableDebug;
-    // Запись отладочной информации в  в лог-файл.
+    //   запись отладочной информации в  в лог-файл;
     $this->writeLogEnabled = $writeLogEnabled;
-    // Перенаправление в Roundcube для браузера.
+    //   перенаправление в Roundcube для браузера;
     $this->sentRedirectEnabled = $sentRedirectEnabled;
-    // Относительный путь к базовому каталогу Roundcube на сервере.
-    $this->rcPath = $webmailPath;
-    // Идентификатор сеанса Roundcube.
+    //   идентификатор сеанса Roundcube;
     $this->rcSessionID = FALSE;
-    // Аутентификация текущей сессии Roundcube.
+    //   аутентификация текущей сессии Roundcube;
     $this->rcSessionAuth = FALSE;
-    // Текущий статус сеанса Roundcube.
+    //   текущий статус сеанса Roundcube;
     $this->rcLoginStatus = 0;
-    // Имя хоста где распологается Roundcube.
-    $this->hostname = FALSE;
-    // Порт для подключения к серверу где распологается Roundcube.
+    //   схема подключения
+    //$this->scheme = $_SERVER['REQUEST_SCHEME'] . '://';
+    //   имя хоста где распологается Roundcube;
+    //$this->hostname = FALSE;
+    //$this->hostname = $_SERVER['HTTP_HOST'];
+    //   порт для подключения к серверу где распологается Roundcube;
     $this->port = FALSE;
-    // Свойство которое определяет вид соединения (защищённое или нет).
+    //   свойство которое определяет вид соединения (защищённое или нет);
     $this->ssl = FALSE;
+    //   относительный путь к базовому каталогу Roundcube на сервере состоит из следующих параметров
+    //   - глобальные массивы:
+    //   $_SERVER['REQUEST_SCHEME'] - схема запроса: http или https,
+    //   $_SERVER['HTTP_HOST'] - имя сервера, которое, как правило, совпадает с доменным именем сайта,
+    //   расположенного на сервере,
+    //   $_SERVER['SCRIPT_NAME'] - содержит путь к текущему исполняемому скрипту.
+    //     Обрезаем строку: вместо массива - используем список состоящий из двух элементов
+    //     (первый элемент - не обязательный).
+    //$this->rcPath = $webmailPath;
+    $this->rcPath = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME'], 4) . '/';
   }
 
   /**
@@ -1016,7 +1031,7 @@ class RoundcubeLogin
   * То функция не будет работать для удаленных машин.
   * @param string Имя хоста или FALSE для использования по умолчанию.
   */
-  public function setHostname($hostname)
+  private function setHostname($hostname)
   {
     // Получаеем имя хоста из переменной "hostname".
     $this->hostname = $hostname;
@@ -1027,7 +1042,7 @@ class RoundcubeLogin
   * По-умолчанию используем порты 80/443.
   * @param int Порт или FALSE для использования по умолчанию.
   */
-  public function setPort($port)
+  private function setPort($port)
   {
     // Получаеем номер порта из переменной "port".
     $this->port = $port;
@@ -1042,7 +1057,7 @@ class RoundcubeLogin
   * @param boolean|null Установите TRUE, чтобы включить или FALSE - чтобы отключить,
   *                     NULL - чтобы определять автоматически.
   */
-  public function setSSL($enableSSL)
+  private function setSSL($enableSSL)
   {
     // Получаеем значение ssl из переменной "enableSSL".
     $this->ssl = $enableSSL;

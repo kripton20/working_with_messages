@@ -19,7 +19,7 @@ require_once(__DIR__ . '/RoundcubeLogin.class.php');
 //   глобальный массив $_SERVER['SCRIPT_NAME'] - содержит путь к текущему исполняемому скрипту.
 //   обрезаем строку: вместо массива - используем список состоящий из двух элементов
 //   (первый элемент - не обязательный).
-$server_folder = dirname($_SERVER['SCRIPT_NAME'], 4);
+//$server_folder = dirname($_SERVER['SCRIPT_NAME'], 4);
 
 // Создаём экземпляр класса "RoundcubeLogin" через переменную "$rcl", и передаём следующие параметры:
 // 1 параметр: $_SERVER['REQUEST_SCHEME'] - схема запроса: http или https.
@@ -30,10 +30,11 @@ $server_folder = dirname($_SERVER['SCRIPT_NAME'], 4);
 // 5 параметр: если - TRUE - включаем запись отладки в лог-файл.
 // 6 параметр: если - TRUE - включаем перенаправление в Roundcube для браузера.
 $rcl           = new RoundcubeLogin(
-  $_SERVER['REQUEST_SCHEME'] . '://'.
-  $_SERVER['HTTP_HOST'] .
-  $server_folder . '/',
+  //$_SERVER['REQUEST_SCHEME'] . '://' .
+  //$_SERVER['HTTP_HOST'] .
+  //$server_folder . '/',
   TRUE, TRUE, TRUE);
+  
 // Выполняем все операции в обработчике ошибок.
 try{
   // Если глобальный массив GET[] содержит "logout" - вызываем функцию "logout()" - выход.
