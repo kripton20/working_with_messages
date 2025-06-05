@@ -56,7 +56,7 @@ try{
       $rcl->redirect();
     }
     // В условии проверяем если включен режим отладки: вызываем функцию записи в лог-файл.
-    if($rcl->debugEnabled == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
+    if($rcl->enableDebug == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
   }
   // Условие проверки передаваемых параметров в глобальном массиве "_GET":
   // от этого зависит какую функцию вызываем: авторизация - "login()" или выход - "logout()".
@@ -75,9 +75,9 @@ try{
         // Тогда вызываем функцию sent_redirect().
         if($rcl->sentRedirectEnabled == TRUE) sent_redirect($rcl, $path_folders);
       }
-      // В условии проверяем если включен режим отладки (debugEnabled = TRUE) и указание
+      // В условии проверяем если включен режим отладки (enableDebug = TRUE) и указание
       // записи в лог-файл (writeLogEnabled = TRUE): вызываем функцию записи в лог-файл.
-      if($rcl->debugEnabled == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
+      if($rcl->enableDebug == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
     }
     // Иначе выполняем авторизацию.
     else{
@@ -97,9 +97,9 @@ try{
         // Тогда вызываем функцию sent_redirect().
         if($rcl->sentRedirectEnabled == TRUE) sent_redirect($rcl, $path_folders);
       }
-      // В условии проверяем если включен режим отладки (debugEnabled = TRUE) и указание
+      // В условии проверяем если включен режим отладки (enableDebug = TRUE) и указание
       // записи в лог-файл (writeLogEnabled = TRUE): вызываем функцию записи в лог-файл.
-      if($rcl->debugEnabled == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
+      if($rcl->enableDebug == TRUE && $rcl->writeLogEnabled == TRUE) set_params_logfile($rcl);
     }
     // Функция отправляет команду WEB-серверу которую должен выполнить Roundcube.
     msg_request($rcl);
@@ -109,9 +109,6 @@ try{
     // Выводим сообщение об ошибке.
     die("<b>ERROR: </b><br /><br />Вы не указали параметры!");
   }
-  // Завершение работы программы.
-  $rcl->logout();
-  exit;
 }
 catch(RoundcubeLoginException $ex){
   // Вызываем функцию "dumpDebugStack()".
@@ -119,6 +116,13 @@ catch(RoundcubeLoginException $ex){
   // Если вход не удался, выводим сообщение об ошибке.
   die("<b>ERROR: </b><br /><br />" . $ex->getMessage());
 }
+
+// Здесь выполняем полезную работу
+
+
+// Завершение работы программы.
+$rcl->logout();
+exit;
 
 // Функция отправляет команду WEB-серверу которую должен выполнить Roundcube.
 function msg_request($rcl)
@@ -185,6 +189,8 @@ function msg_request($rcl)
     $rm_response .= $line;
   }
   $a =1;
+  echo($rm_response);
+    $a =2;
   // Обновим страницу.
   //$rcl->redirect();
   // А на POST-запрос не срабатывает, нужно узнать какую строку отправлять в запросе.

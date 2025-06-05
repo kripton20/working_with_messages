@@ -116,7 +116,7 @@ class RoundcubeLogin
   * @var string
   */
   public $rcPath;
-  public $rcPath1;
+  //public $rcPath1;
 
   /**
   * Идентификатор сеанса Roundcube.
@@ -158,8 +158,8 @@ class RoundcubeLogin
   *
   * @var string
   */
-  //private $hostname;
-  
+  private $hostname;
+
   //private $scheme;
 
   /**
@@ -242,9 +242,11 @@ class RoundcubeLogin
     //$this->scheme = $_SERVER['REQUEST_SCHEME'] . '://';
     //   имя хоста где распологается Roundcube;
     //$this->hostname = FALSE;
-    //$this->hostname = $_SERVER['HTTP_HOST'];
+    $this->hostname = $_SERVER['HTTP_HOST'];
     //   порт для подключения к серверу где распологается Roundcube;
-    $this->port = FALSE;
+    //$this->port = FALSE;
+    $this->port = $_SERVER['SERVER_PORT'];
+    echo("Порт: " . $this->port . "\n" . "\n");
     //   свойство которое определяет вид соединения (защищённое или нет);
     $this->ssl = FALSE;
     //   относительный путь к базовому каталогу Roundcube на сервере состоит из следующих параметров
@@ -503,30 +505,31 @@ class RoundcubeLogin
     // Определяем метод запроса.
     $method = (!$postData) ? "GET" : "POST";
     // Получаем значение SSL.
-    $isSSL  = $this->ssl;
+    //$isSSL  = $this->ssl;
     // В условии проверяем значение переменной "isSSL":
-    if($isSSL === null){
-      /**
-      * isset — определяет, была ли установлена переменная значением, отличным от null.
-      *
-      * isset(mixed $var, mixed ...$vars):bool
-      *
-      * Если переменная была удалена с помощью unset(), то она больше не считается установленной.
-      * isset() вернёт false при проверке переменной которая была установлена значением null.
-      * Также учтите, что NULL это символ ("\0") не равен константе null в PHP. Если были переданы
-      * несколько параметров, то isset() вернёт true только в том случае, если все параметры определены.
-      * Проверка происходит слева направо и заканчивается, как только будет встречена
-      * неопределённая переменная.
-      *
-      * @var mixed Проверяемая переменная.
-      * @var vars  Следующие переменные.
-      *
-      * @return TRUE Возвращает true, если var определена и её значение отлично от null,
-      * и false в противном случае.
-      */
-      // Если эквивалентно "null" - то присвоим "HTTPS".
-      $isSSL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
-    }
+    //    if($this->ssl === null){
+    //      /**
+    //      * isset — определяет, была ли установлена переменная значением, отличным от null.
+    //      *
+    //      * isset(mixed $var, mixed ...$vars):bool
+    //      *
+    //      * Если переменная была удалена с помощью unset(), то она больше не считается установленной.
+    //      * isset() вернёт false при проверке переменной которая была установлена значением null.
+    //      * Также учтите, что NULL это символ ("\0") не равен константе null в PHP. Если были переданы
+    //      * несколько параметров, то isset() вернёт true только в том случае, если все параметры определены.
+    //      * Проверка происходит слева направо и заканчивается, как только будет встречена
+    //      * неопределённая переменная.
+    //      *
+    //      * @var mixed Проверяемая переменная.
+    //      * @var vars  Следующие переменные.
+    //      *
+    //      * @return TRUE Возвращает true, если var определена и её значение отлично от null,
+    //      * и false в противном случае.
+    //      */
+    //      // Если эквивалентно "null" - то присвоим "HTTPS".
+    //      $isSSL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
+    //    }
+    
     // В условии проверяем - если переменная "port" не существует:
     //   значит номер порта отсутствует.
     if(!$this->port){
@@ -571,6 +574,7 @@ class RoundcubeLogin
       // тогда будем использовать протокол SSL.
       $this->hostname = "ssl://$this->hostname";
     }
+    
     // Инициируем переменную-массив "cookies".
     $cookies = array();
     // В цикле перебираем глобальный массив "_COOKIE", получаем имя и значение куков.
@@ -601,7 +605,7 @@ class RoundcubeLogin
     // Создаём запрос с куками для получения идентификатора сессии.
     // Описание заголовков запросов запросов находится здесь:
     // https://developer.mozilla.org/ru/docs/Web/HTTP/Headers
-    
+
     // В условии проверяем какой формат запроса использовать: если переменная "$method" == "POST":
     //        if ($method == "POST") {
     //            // Создаём запрос POST с заданными данными.
@@ -730,10 +734,10 @@ class RoundcubeLogin
     else{
       // Переменной "request" присвоим тело GET-запроса.
       $request =
-      "GET " . $path . " HTTP/1.1" . "\r\n" . 
-      "Host: " . $_SERVER['HTTP_HOST'] . "\r\n" . 
-      "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" . 
-      $cookies . 
+      "GET " . $path . " HTTP/1.1" . "\r\n" .
+      "Host: " . $_SERVER['HTTP_HOST'] . "\r\n" .
+      "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+      $cookies .
       "Connection: close" . "\r\n\r\n";
     }
     /**
