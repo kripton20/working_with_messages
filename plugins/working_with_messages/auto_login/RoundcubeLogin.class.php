@@ -184,7 +184,7 @@ class RoundcubeLogin
   *
   * @var bool
   */
-  public $debugEnabled;
+  public $enableDebug;
 
   /**
   * Можно включить запись отладки в лог-файл.
@@ -227,7 +227,7 @@ class RoundcubeLogin
     //   создаём массив для записи отладочных сообщений в стёк;
     $this->debugStack = array();
     //   вывод отладочной информации в браузер;
-    $this->debugEnabled = $enableDebug;
+    $this->enableDebug = $enableDebug;
     //   запись отладочной информации в  в лог-файл;
     $this->writeLogEnabled = $writeLogEnabled;
     //   перенаправление в Roundcube для браузера;
@@ -246,7 +246,7 @@ class RoundcubeLogin
     //   порт для подключения к серверу где распологается Roundcube;
     //$this->port = FALSE;
     $this->port = $_SERVER['SERVER_PORT'];
-    echo("Порт: " . $this->port . "\n" . "\n");
+    //echo("Порт: " . $this->port . "\r\n");
     //   свойство которое определяет вид соединения (защищённое или нет);
     $this->ssl = FALSE;
     //   относительный путь к базовому каталогу Roundcube на сервере состоит из следующих параметров
@@ -354,7 +354,7 @@ class RoundcubeLogin
       */
       // Переменной "line" присвоим значение функции "fgets()":
       // Прочитаем очередную строку длиной 700 символов из файла (переменная "fp").
-      write_log_file($line);
+      //write_log_file($line);
       $line = fgets($fp, 700);
       /**
       * preg_match — выполняет проверку на соответствие регулярному выражению.
@@ -428,7 +428,7 @@ class RoundcubeLogin
       // Переопределим предыдущий токен (если он существует!).
       // Получаем токен из заголовка ответа сервера (начиная с Roundcube 0.5.1).
       // http://website-lab.ru/article/regexp/shpargalka_po_regulyarnyim_vyirajeniyam
-      if((preg_match('/"request_token":"([^"]+)",/mi', $response, $m)) ||
+      if((preg_match('/"request_token":"([^"]+)"/mi', $response, $m)) ||
         (preg_match('/<input . +name="_token" . +value="([^"]+)">(<div>|\n|\s)/i', $line, $m))){
         // Запишем отладочное сообщение в массив "debugStack[]":
         //   вызываем функцию "addDebug()" и передаём ей сообщение.
@@ -439,7 +439,8 @@ class RoundcubeLogin
         $this->lastToken = $m[1];
       }
       // Если сервер прислал страницу со списком писем - значит сеанс активный.
-      if(preg_match('/<input . +name="_pass"/mi', $line)){
+      //if(preg_match('/<input . +name="_pass"/mi', $line)){
+        if(preg_match('/<div id="login-form">/mi', $line)){
         // Запишем отладочное сообщение в массив "debugStack[]":
         //   вызываем функцию "addDebug()" и передаём ей сообщение.
         $this->addDebug("NOT LOGGED IN", "Мы не вошли в систему." . "\r\n");
@@ -452,7 +453,7 @@ class RoundcubeLogin
         //   в переменной "$response".
         $this->addDebug("RESPONSE", $response . "\r\n");
         // Прекратим поиск (для увеличения быстродействия).
-        break;
+        //break;
       }
       // Иначе если сервер прислал страницу с формой для входа (поля для ввода логина и
       // пароля - значит мы не вошли в систему.
@@ -1075,8 +1076,8 @@ class RoundcubeLogin
   */
   private function addDebug($action, $data)
   {
-    // Если значение свойства "debugEnabled" отсутствует: вернём "FALSE".
-    if(!$this->debugEnabled) return FALSE;
+    // Если значение свойства "enableDebug" отсутствует: вернём "FALSE".
+    if(!$this->enableDebug) return FALSE;
     // В массив "debugStack[]" добавляем отладачное сообщение.
     $this->debugStack[] = sprintf(
       "<b>%s:</b><br /><pre>%s</pre>",

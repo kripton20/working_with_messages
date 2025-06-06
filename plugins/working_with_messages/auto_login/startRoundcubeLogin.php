@@ -118,6 +118,7 @@ catch(RoundcubeLoginException $ex){
 }
 
 // Здесь выполняем полезную работу
+$rсl->redirect();
 
 
 // Завершение работы программы.
